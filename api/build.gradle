@@ -1,7 +1,41 @@
+plugins {
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+}
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-
+    implementation("org.jetbrains:annotations:24.1.0")
 }
+
+javadoc{
+    options {
+        encoding "UTF-8"
+    }
+}
+
+shadowJar{
+    minimize()
+}
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications.withType(MavenPublication.class).configureEach {
+        groupId = "moe.caa"
+        artifactId = "multilogin-api"
+
+        from components.java
+    }
+}
+//publishing {
+//    publications {
+//        nexus(MavenPublication) {
+//
+//        }
+//    }
+//}

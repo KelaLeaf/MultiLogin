@@ -1,10 +1,10 @@
 package moe.caa.multilogin.core.auth.validate.entry;
 
 import lombok.SneakyThrows;
-import moe.caa.multilogin.api.logger.LoggerProvider;
-import moe.caa.multilogin.api.plugin.IPlayer;
-import moe.caa.multilogin.api.util.Pair;
-import moe.caa.multilogin.api.util.ValueUtil;
+import moe.caa.multilogin.api.internal.logger.LoggerProvider;
+import moe.caa.multilogin.api.internal.plugin.IPlayer;
+import moe.caa.multilogin.api.internal.util.Pair;
+import moe.caa.multilogin.api.internal.util.ValueUtil;
 import moe.caa.multilogin.core.auth.validate.ValidateContext;
 import moe.caa.multilogin.core.main.MultiCore;
 import moe.caa.multilogin.flows.workflows.BaseFlows;
@@ -73,24 +73,27 @@ public class AssignInGameFlows extends BaseFlows<ValidateContext> {
             }
         }
 
-        String fixName = loginName;
+        String fixName = validateContext.getBaseServiceAuthenticationResult().getServiceConfig().generateName(loginName);
+        if(fixName.isEmpty()) fixName = "1";
+
+        String initFixName = fixName;
         if (core.getPluginConfig().isNameCorrect()) {
-            int i = 0;
             boolean modified = false;
             UUID ownerUUID;
             while ((ownerUUID = core.getSqlManager().getInGameProfileTable().getInGameUUIDIgnoreCase(fixName)) != null) {
                 if(ownerUUID.equals(inGameUUID)) break;
-                fixName = loginName + ++i;
+                fixName = incrementString(fixName);
                 modified = true;
             }
+
             if(modified){
                 UUID finalInGameUUID = inGameUUID;
                 String finalFixName = fixName;
-                LoggerProvider.getLogger().warn(String.format("The name %s is occupied, change it to %s.", loginName, fixName));
+                LoggerProvider.getLogger().warn(String.format("The name %s is occupied, change it to %s.", initFixName, fixName));
                 core.getPlugin().getRunServer().getScheduler().runTaskAsync(() -> {
                     IPlayer player = core.getPlugin().getRunServer().getPlayerManager().getPlayer(finalInGameUUID);
                     player.sendMessagePL(core.getLanguageHandler().getMessage("name_correct_info",
-                            new Pair<>("old_name", loginName),
+                            new Pair<>("old_name", initFixName),
                             new Pair<>("new_name", finalFixName)
                     ));
                 }, 2000);
@@ -125,5 +128,21 @@ public class AssignInGameFlows extends BaseFlows<ValidateContext> {
                 return Signal.TERMINATED;
             }
         }
+    }
+
+    private String incrementString(String source){
+        if (source.isEmpty()) return "1";
+
+        char c = source.charAt(source.length() - 1);
+        if (Character.isDigit(c)) {
+            int i = Character.getNumericValue(c);
+            if(i == 9){
+                return incrementString(source.substring(0, source.length() - 1)) + "0";
+            } else {
+                return source.substring(0, source.length() - 1) + (i + 1);
+            }
+        }
+
+        return source + "1";
     }
 }

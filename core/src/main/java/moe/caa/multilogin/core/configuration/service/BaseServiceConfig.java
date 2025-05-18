@@ -1,26 +1,31 @@
 package moe.caa.multilogin.core.configuration.service;
 
 import lombok.Getter;
+import moe.caa.multilogin.api.service.IService;
+import moe.caa.multilogin.api.service.ServiceType;
 import moe.caa.multilogin.core.configuration.ConfException;
 import moe.caa.multilogin.core.configuration.SkinRestorerConfig;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
 @Getter
-public abstract class BaseServiceConfig {
+public abstract class BaseServiceConfig implements IService {
     private final int id;
     private final String name;
     private final InitUUID initUUID;
+    private final String initNameFormat;
     private final boolean whitelist;
     private final SkinRestorerConfig skinRestorer;
 
-    protected BaseServiceConfig(int id, String name, InitUUID initUUID,
+    protected BaseServiceConfig(int id, String name, InitUUID initUUID, String initNameFormat,
                                 boolean whitelist, SkinRestorerConfig skinRestorer) throws ConfException {
         this.id = id;
         this.name = name;
         this.initUUID = initUUID;
+        this.initNameFormat = initNameFormat;
         this.whitelist = whitelist;
         this.skinRestorer = skinRestorer;
 
@@ -35,7 +40,22 @@ public abstract class BaseServiceConfig {
             ));
     }
 
+    public String generateName(String loginName){
+        return initNameFormat.replace("{name}", loginName).replace(" ", "_");
+    }
 
+    @Override
+    public int getServiceId() {
+        return id;
+    }
+
+    @NotNull
+    @Override
+    public String getServiceName() {
+        return name;
+    }
+
+    @NotNull
     public abstract ServiceType getServiceType();
 
     /**

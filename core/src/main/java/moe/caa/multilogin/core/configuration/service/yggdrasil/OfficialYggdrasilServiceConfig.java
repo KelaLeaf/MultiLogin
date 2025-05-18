@@ -1,28 +1,30 @@
 package moe.caa.multilogin.core.configuration.service.yggdrasil;
 
+import moe.caa.multilogin.api.service.ServiceType;
 import moe.caa.multilogin.core.configuration.ConfException;
 import moe.caa.multilogin.core.configuration.ProxyConfig;
 import moe.caa.multilogin.core.configuration.SkinRestorerConfig;
-import moe.caa.multilogin.core.configuration.service.ServiceType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 正版官方 Yggdrasil
  */
 public class OfficialYggdrasilServiceConfig extends BaseYggdrasilServiceConfig {
-    public OfficialYggdrasilServiceConfig(int id, String name, InitUUID initUUID, boolean whitelist, SkinRestorerConfig skinRestorer, boolean trackIp, int timeout, int retry, long retryDelay, ProxyConfig authProxy) throws ConfException {
-        super(id, name, initUUID, whitelist, skinRestorer, trackIp, timeout, retry, retryDelay, authProxy);
+    private final String customSessionServer;
+
+    public OfficialYggdrasilServiceConfig(int id, String name, InitUUID initUUID, String initNameFormat, boolean whitelist, SkinRestorerConfig skinRestorer, boolean trackIp, int timeout, int retry, long retryDelay, ProxyConfig authProxy, String customSessionServer) throws ConfException {
+        super(id, name, initUUID, initNameFormat, whitelist, skinRestorer, trackIp, timeout, retry, retryDelay, authProxy);
+        if (!customSessionServer.endsWith("/")) {
+            customSessionServer = customSessionServer.concat("/");
+        }
+        this.customSessionServer = customSessionServer;
     }
+
 
     @Override
     protected String getAuthURL() {
-        return "https://".concat("session")
-                .concat("server.")
-                .concat("mojang")
-                .concat(".com")
-                .concat("/session")
-                .concat("/minecraft")
-                .concat("/hasJoined?")
-                .concat("username={0}&serverId={1}{2}");
+	    String baseUrl = customSessionServer;
+	    return baseUrl.concat("session/minecraft/hasJoined?username={0}&serverId={1}{2}");
     }
 
     @Override
@@ -40,6 +42,7 @@ public class OfficialYggdrasilServiceConfig extends BaseYggdrasilServiceConfig {
         return HttpRequestMethod.GET;
     }
 
+    @NotNull
     @Override
     public ServiceType getServiceType() {
         return ServiceType.OFFICIAL;

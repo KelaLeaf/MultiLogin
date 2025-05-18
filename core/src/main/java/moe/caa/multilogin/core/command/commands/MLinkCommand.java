@@ -4,11 +4,11 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.SneakyThrows;
-import moe.caa.multilogin.api.auth.GameProfile;
-import moe.caa.multilogin.api.plugin.IPlayer;
-import moe.caa.multilogin.api.plugin.ISender;
-import moe.caa.multilogin.api.util.Pair;
-import moe.caa.multilogin.api.util.ValueUtil;
+import moe.caa.multilogin.api.profile.GameProfile;
+import moe.caa.multilogin.api.internal.plugin.IPlayer;
+import moe.caa.multilogin.api.internal.plugin.ISender;
+import moe.caa.multilogin.api.internal.util.Pair;
+import moe.caa.multilogin.api.internal.util.ValueUtil;
 import moe.caa.multilogin.core.command.CommandHandler;
 import moe.caa.multilogin.core.command.Permissions;
 import moe.caa.multilogin.core.command.argument.OnlinePlayerArgumentType;
@@ -82,8 +82,7 @@ public class MLinkCommand {
     private int executeLinkAccept(CommandContext<ISender> context) throws CommandSyntaxException {
         handler.requireDataCacheArgumentSelf(context);
         String string = StringArgumentType.getString(context, "name");
-
-        gameProfileEntryMap.values().removeIf(e -> e.timeMills < System.currentTimeMillis() - 30000);
+        gameProfileEntryMap.values().removeIf(e -> e.timeMills < System.currentTimeMillis() - CommandHandler.getCore().getPluginConfig().getLinkAcceptValidTimeMills());
         Optional<Map.Entry<GameProfile, Entry>> entry = gameProfileEntryMap.entrySet().stream()
                 .filter(e -> e.getKey().getName().equalsIgnoreCase(string))
                 .filter(e -> e.getValue().receiverUserInGameUUID.equals(context.getSource().getAsPlayer().getUniqueId()))

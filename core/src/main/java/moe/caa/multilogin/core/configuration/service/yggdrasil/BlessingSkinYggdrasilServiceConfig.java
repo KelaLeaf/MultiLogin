@@ -1,9 +1,10 @@
 package moe.caa.multilogin.core.configuration.service.yggdrasil;
 
+import moe.caa.multilogin.api.service.ServiceType;
 import moe.caa.multilogin.core.configuration.ConfException;
 import moe.caa.multilogin.core.configuration.ProxyConfig;
 import moe.caa.multilogin.core.configuration.SkinRestorerConfig;
-import moe.caa.multilogin.core.configuration.service.ServiceType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Blessing Skin 皮肤站 Yggdrasil
@@ -11,8 +12,8 @@ import moe.caa.multilogin.core.configuration.service.ServiceType;
 public class BlessingSkinYggdrasilServiceConfig extends BaseYggdrasilServiceConfig {
     private final String apiRoot;
 
-    public BlessingSkinYggdrasilServiceConfig(int id, String name, InitUUID initUUID, boolean whitelist, SkinRestorerConfig skinRestorer, boolean trackIp, int timeout, int retry, long retryDelay, ProxyConfig authProxy, String apiRoot) throws ConfException {
-        super(id, name, initUUID, whitelist, skinRestorer, trackIp, timeout, retry, retryDelay, authProxy);
+    public BlessingSkinYggdrasilServiceConfig(int id, String name, InitUUID initUUID, String initNameFormat, boolean whitelist, SkinRestorerConfig skinRestorer, boolean trackIp, int timeout, int retry, long retryDelay, ProxyConfig authProxy, String apiRoot) throws ConfException {
+        super(id, name, initUUID,initNameFormat, whitelist, skinRestorer, trackIp, timeout, retry, retryDelay, authProxy);
         if (!apiRoot.endsWith("/")) {
             apiRoot = apiRoot.concat("/");
         }
@@ -45,6 +46,7 @@ public class BlessingSkinYggdrasilServiceConfig extends BaseYggdrasilServiceConf
         return HttpRequestMethod.GET;
     }
 
+    @NotNull
     @Override
     public ServiceType getServiceType() {
         return ServiceType.BLESSING_SKIN;

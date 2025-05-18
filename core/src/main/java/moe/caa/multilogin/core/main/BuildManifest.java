@@ -1,7 +1,7 @@
 package moe.caa.multilogin.core.main;
 
 import lombok.Getter;
-import moe.caa.multilogin.api.logger.LoggerProvider;
+import moe.caa.multilogin.api.internal.logger.LoggerProvider;
 
 import java.io.IOException;
 import java.util.Date;
@@ -33,16 +33,7 @@ public class BuildManifest {
 
     public void checkStable() {
         if (!buildType.equalsIgnoreCase("final")) {
-            LoggerProvider.getLogger().warn("######################################################");
-            LoggerProvider.getLogger().warn("#   Warning, you are not using a stable version");
-            LoggerProvider.getLogger().warn("# and may have some very fatal errors!");
-            LoggerProvider.getLogger().warn("#");
-            LoggerProvider.getLogger().warn("#   Please download the latest stable version");
-            LoggerProvider.getLogger().warn("# from https://github.com/CaaMoe/MultiLogin/releases");
-            LoggerProvider.getLogger().warn("#");
-            LoggerProvider.getLogger().warn("#     Build Time : " + buildDate);
-            LoggerProvider.getLogger().warn("#     Version    : " + version);
-            LoggerProvider.getLogger().warn("######################################################");
+            LoggerProvider.getLogger().warn("Please exercise caution and care when using the current version of the multilogin, as it may be unstable.");
         }
     }
 }

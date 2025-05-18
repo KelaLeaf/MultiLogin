@@ -2,14 +2,17 @@ package moe.caa.multilogin.core.handle;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import moe.caa.multilogin.api.auth.GameProfile;
-import moe.caa.multilogin.api.handle.HandleResult;
-import moe.caa.multilogin.api.handle.HandlerAPI;
-import moe.caa.multilogin.api.logger.LoggerProvider;
-import moe.caa.multilogin.api.plugin.IPlayer;
-import moe.caa.multilogin.api.util.Pair;
+import moe.caa.multilogin.api.data.MultiLoginPlayerData;
+import moe.caa.multilogin.api.profile.GameProfile;
+import moe.caa.multilogin.api.internal.handle.HandleResult;
+import moe.caa.multilogin.api.internal.handle.HandlerAPI;
+import moe.caa.multilogin.api.internal.logger.LoggerProvider;
+import moe.caa.multilogin.api.internal.plugin.IPlayer;
+import moe.caa.multilogin.api.internal.util.Pair;
+import moe.caa.multilogin.api.service.IService;
 import moe.caa.multilogin.core.configuration.service.BaseServiceConfig;
 import moe.caa.multilogin.core.main.MultiCore;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
@@ -96,6 +99,10 @@ public class PlayerHandler implements HandlerAPI {
         }, 3000);
     }
 
+    public MultiLoginPlayerData getPlayerData(UUID inGameUUID){
+        return cache.get(inGameUUID);
+    }
+
     @Override
     public Pair<GameProfile, Integer> getPlayerOnlineProfile(UUID inGameUUID) {
         Entry entry = cache.get(inGameUUID);
@@ -159,10 +166,22 @@ public class PlayerHandler implements HandlerAPI {
     }
 
     @AllArgsConstructor
-    public static class Entry {
+    public static class Entry implements MultiLoginPlayerData {
         private final GameProfile onlineProfile;
         private final BaseServiceConfig serviceConfig;
         private final long signTimeMillis;
+
+        @NotNull
+        @Override
+        public GameProfile getOnlineProfile() {
+            return onlineProfile;
+        }
+
+        @NotNull
+        @Override
+        public IService getLoginService() {
+            return serviceConfig;
+        }
 
         @Override
         public boolean equals(Object o) {

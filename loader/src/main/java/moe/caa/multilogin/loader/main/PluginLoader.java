@@ -1,10 +1,10 @@
 package moe.caa.multilogin.loader.main;
 
 import lombok.Getter;
-import moe.caa.multilogin.api.logger.LoggerProvider;
-import moe.caa.multilogin.api.main.MultiCoreAPI;
-import moe.caa.multilogin.api.plugin.IPlugin;
-import moe.caa.multilogin.api.util.IOUtil;
+import moe.caa.multilogin.api.internal.logger.LoggerProvider;
+import moe.caa.multilogin.api.internal.main.MultiCoreAPI;
+import moe.caa.multilogin.api.internal.plugin.IPlugin;
+import moe.caa.multilogin.api.internal.util.IOUtil;
 import moe.caa.multilogin.flows.workflows.ParallelFlows;
 import moe.caa.multilogin.flows.workflows.Signal;
 import moe.caa.multilogin.loader.classloader.IExtURLClassLoader;
@@ -85,7 +85,7 @@ public class PluginLoader {
     private final AtomicBoolean loaded = new AtomicBoolean(false);
     @Getter
     private IExtURLClassLoader pluginClassLoader = new PriorAllURLClassLoader(new URL[0], PluginLoader.class.getClassLoader(),
-            Stream.of("moe.caa.multilogin.", "java.", "net.minecraft.", "com.mojang.").collect(Collectors.toSet()));
+            Stream.of("moe.caa.multilogin.", "java.", "net.minecraft.", "com.mojang.", "org.bukkit.").collect(Collectors.toSet()));
     @Getter
     private MultiCoreAPI coreObject;
 

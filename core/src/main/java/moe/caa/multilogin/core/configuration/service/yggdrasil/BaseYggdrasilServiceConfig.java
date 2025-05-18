@@ -1,8 +1,8 @@
 package moe.caa.multilogin.core.configuration.service.yggdrasil;
 
 import lombok.Getter;
-import moe.caa.multilogin.api.util.Pair;
-import moe.caa.multilogin.api.util.ValueUtil;
+import moe.caa.multilogin.api.internal.util.Pair;
+import moe.caa.multilogin.api.internal.util.ValueUtil;
 import moe.caa.multilogin.core.configuration.ConfException;
 import moe.caa.multilogin.core.configuration.ProxyConfig;
 import moe.caa.multilogin.core.configuration.SkinRestorerConfig;
@@ -19,9 +19,9 @@ public abstract class BaseYggdrasilServiceConfig extends BaseServiceConfig {
     private final long retryDelay;
     private final ProxyConfig authProxy;
 
-    protected BaseYggdrasilServiceConfig(int id, String name, InitUUID initUUID, boolean whitelist, SkinRestorerConfig skinRestorer,
+    protected BaseYggdrasilServiceConfig(int id, String name, InitUUID initUUID, String initNameFormat, boolean whitelist, SkinRestorerConfig skinRestorer,
                                          boolean trackIp, int timeout, int retry, long retryDelay, ProxyConfig authProxy) throws ConfException {
-        super(id, name, initUUID, whitelist, skinRestorer);
+        super(id, name, initUUID, initNameFormat, whitelist, skinRestorer);
         this.trackIp = trackIp;
         this.timeout = timeout;
         this.retry = retry;
